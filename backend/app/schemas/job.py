@@ -3,10 +3,12 @@
 import uuid
 from typing import Any, Dict
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class JobStatusResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     id: uuid.UUID
     project_id: uuid.UUID
     project_name: str | None = None

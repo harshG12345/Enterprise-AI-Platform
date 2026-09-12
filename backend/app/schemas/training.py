@@ -4,7 +4,7 @@ import uuid
 from enum import Enum
 from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ModelAlgorithm(str, Enum):
@@ -30,6 +30,8 @@ class CrossValidationConfig(BaseModel):
 
 
 class TrainingJobCreate(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     project_id: uuid.UUID
     dataset_id: uuid.UUID
     pipeline_id: str | None = None
@@ -95,6 +97,8 @@ class ResidualPoint(BaseModel):
 
 
 class TrainingJobDetailResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     id: uuid.UUID
     project_id: uuid.UUID
     dataset_id: uuid.UUID

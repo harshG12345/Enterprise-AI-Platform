@@ -89,10 +89,15 @@ data/uploads/*
 !data/uploads/.gitkeep
 data/models/*
 !data/models/.gitkeep
+data/predictions/*
+!data/predictions/.gitkeep
 backend/data/uploads/*
 !backend/data/uploads/.gitkeep
 backend/data/models/*
 !backend/data/models/.gitkeep
+backend/data/predictions/*
+!backend/data/predictions/.gitkeep
+backend/data/data/
 
 # Observability Persistent Volumes
 prometheus_data/

@@ -3,7 +3,7 @@
 import uuid
 from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.models.trained_model import ModelStatus
 
@@ -80,6 +80,8 @@ class ModelLeaderboardItem(BaseModel):
 
 
 class ModelComparisonRequest(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     model_ids: List[uuid.UUID] = Field(..., min_length=1, max_length=10)
 
 
