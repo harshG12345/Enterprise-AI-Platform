@@ -63,38 +63,38 @@ An enterprise-grade, full-stack Data Science and MLOps platform engineered for m
 
 ## 🚀 Key Platform Capabilities
 
-### 1. Security, Authentication & Multi-Tenant Governance (Phases 3, 4, 19)
+### 1. Security, Authentication & Multi-Tenant Governance
 - **Argon2id Password Hashing** with Bcrypt fallbacks and cryptographically secure 16-byte random salts.
 - **Signed JWT Authentication** (HS256) with role-based access control (`ADMIN`, `ML_ENGINEER`, `DATA_SCIENTIST`, `VIEWER`).
 - **Sliding Window Rate Limiting** (`RateLimitMiddleware`) protecting authentication (30 req/min) and inference routes (120 req/min) with `Retry-After` headers and `429` status codes.
 - **Path Traversal & Payload Sanitizer** (`validate_secure_path`, `validate_file_upload`) neutralizing null bytes (`\x00`), illegal path sequences (`../`), and restricting uploads to authorized extensions (`.csv`, `.xlsx`, `.xls`, `.parquet`, `.json`) under 250MB.
 - **OWASP HTTP Security Headers** (HSTS with preload, Content-Security-Policy, X-Frame-Options: DENY, X-Content-Type-Options: nosniff, Referrer-Policy, Permissions-Policy).
 
-### 2. Tabular Data Ingestion & Automated EDA (Phases 5, 6)
+### 2. Tabular Data Ingestion & Automated EDA
 - **Streaming Tabular Upload**: Chunked multipart file streaming preventing memory exhaustion during multi-gigabyte uploads.
 - **Schema & Type Inference**: Automatic numerical, categorical, datetime, and text column detection with missingness profiling.
 - **Automated Statistical EDA**: Generates descriptive metrics (mean, std, IQR, skewness, kurtosis), outlier detection (Z-score & Tukey's fences), missing value heatmap data, Pearson correlation matrix, and distribution histograms.
 
-### 3. Zero-Data-Leakage Preprocessing Engine (Phase 7)
+### 3. Zero-Data-Leakage Preprocessing Engine
 - **Scikit-Learn Preprocessing Pipelines**: Automatic feature transformers (`StandardScaler`, `MinMaxScaler`, `RobustScaler`, `OneHotEncoder`, `OrdinalEncoder`, `SimpleImputer`, `KNNImputer`, `IterativeImputer`).
 - **Isolated Split Fitting**: Feature encoders and scalers are fitted exclusively on training folds/splits and serialized directly with model estimators inside unified `ColumnTransformer` pipelines.
 
-### 4. Distributed ML Training & Cross-Validation (Phases 8, 10)
+### 4. Distributed ML Training & Cross-Validation
 - **Task Auto-Detection**: Automated inference of task type (`CLASSIFICATION` vs `REGRESSION`) based on target cardinality and data types.
 - **Supported Algorithms**: Logistic Regression, Random Forest, Gradient Boosting, Decision Trees, K-Nearest Neighbors, Linear Regression, Ridge, and Lasso.
 - **Hyperparameter Optimization**: Grid search and random search with $K$-Fold stratified cross-validation.
 - **Decoupled Celery Asynchronous Workers**: Heavy model fitting is offloaded to Celery background task workers over Redis queues (`ml_training`, `batch_inference`) with isolated database connections.
 
-### 5. MLflow Tracking & Lifecycle Governance (Phases 9, 11)
+### 5. MLflow Tracking & Lifecycle Governance
 - **MLflow Client Integration**: Automated run creation, metric logging ($R^2$, RMSE, MAE, Accuracy, F1-Score, ROC-AUC, Log Loss), parameter logging, and artifact persistence.
 - **Model Registry & Governance**: Versioning and stage management (`DEVELOPMENT` $\rightarrow$ `STAGING` $\rightarrow$ `PRODUCTION` $\rightarrow$ `ARCHIVED`).
 - **Single-Champion Policy**: Strictly enforces a single active `PRODUCTION` champion per project, automatically archiving predecessors with immutable audit logging.
 
-### 6. Real-Time & Batch Prediction Engine (Phase 12)
+### 6. Real-Time & Batch Prediction Engine
 - **Real-Time REST Inference**: Single-row low-latency JSON prediction with dynamic schema validation, automated preprocessing pipeline transformation, class probability outputs, and p50/p95 latency recording.
 - **Batch CSV Inference**: Celery background processing for high-volume tabular CSV files with output downloadable via presigned URLs.
 
-### 7. Statistical Data Drift Engine & Monitoring (Phase 13)
+### 7. Statistical Data Drift Engine & Monitoring
 - **Continuous Distribution Comparison**: Evaluates inference batches against baseline training data distributions.
 - **Statistical Tests**:
   - **Numerical Features**: Kolmogorov-Smirnov (KS-test) and 2-Wasserstein Distance.
@@ -102,7 +102,7 @@ An enterprise-grade, full-stack Data Science and MLOps platform engineered for m
   - **Population Stability Index (PSI)**: Multi-bin entropy drift scoring.
 - **Health Indicators**: Dynamic status classifications (`HEALTHY`, `WARNING`, `DRIFT_DETECTED`).
 
-### 8. Full-Stack Reactive Web Application (Phase 14)
+### 8. Full-Stack Reactive Web Application
 - **Modern Dark UI HUD**: Built with React 18, TypeScript, Tailwind CSS, Lucide icons, and Recharts.
 - **Interactive Pages**:
   - **Cluster Overview HUD**: Real-time KPI metrics, active workers, quick launch action cards, champion leaderboard.
@@ -115,12 +115,12 @@ An enterprise-grade, full-stack Data Science and MLOps platform engineered for m
   - **Monitoring & Drift Center**: Feature-level PSI score visualizers, drift alert counters, distribution overlays.
   - **Settings & Audit Governance**: Profile management, REST API key generation, cluster environment inspection, immutable security audit logs.
 
-### 9. Observability, Prometheus & Grafana (Phase 16)
+### 9. Observability, Prometheus & Grafana
 - **Prometheus Metric Exposition**: Native `/metrics` endpoint exporting `http_requests_total`, `http_request_duration_seconds`, `model_predictions_total`, `model_prediction_latency_seconds`, `model_drift_alerts_total`, `model_max_psi_score`, `celery_tasks_total`, `registered_models_total`.
 - **Pre-Configured Grafana Dashboards**: Auto-provisioned 10-panel MLOps telemetry dashboard.
 - **Structured JSON Logging**: ISO-8601 UTC timestamps with `contextvars` correlation ID binding (`X-Request-ID`).
 
-### 10. Multi-Container Orchestration & CI/CD (Phases 17, 18)
+### 10. Multi-Container Orchestration & CI/CD
 - **Docker Multi-Stage Builds**: Python 3.13-slim runtime with non-root security (`appuser`) and Node 20 / Nginx SPA builds.
 - **Docker Compose Topology**: 9 orchestrated services (`postgres`, `redis`, `mlflow`, `backend`, `celery_worker`, `frontend`, `prometheus`, `grafana`, `nginx`) with health checks, persistent volumes, and bridge network.
 - **Automated GitHub Actions CI/CD**: Matrix testing (Python 3.11, 3.12, 3.13 / Node 20, 22), coverage gates ($\ge 70\%$), E2E smoke tests, CodeQL SAST, Trivy container scanning, and multi-arch container publishing (`linux/amd64`, `linux/arm64`) to `ghcr.io`.
