@@ -1,0 +1,99 @@
+# ==============================================================================
+# Enterprise AI Data Science & MLOps Platform - Comprehensive .gitignore
+# ==============================================================================
+
+# Python Virtual Environments & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+backend/.venv/
+venv/
+ENV/
+.pip_cache/
+.temp/
+
+# Build & Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Linting
+.pytest_cache/
+backend/.pytest_cache/
+.coverage
+backend/.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+backend/.ruff_cache/
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+frontend/dist/
+frontend/dist-ssr/
+.npm_cache/
+*.local
+
+# Environment Variables & Secrets
+.env
+.env.*.local
+backend/.env
+frontend/.env.local
+*.pem
+*.key
+*.crt
+
+# IDEs & System Files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# MLflow, SQLite & Local Databases
+mlruns/
+mlruns.db
+mlflow.db
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+test_enterprise_ai.db
+backend/test_enterprise_ai.db
+
+# Dynamic Storage & Test Artifacts (Preserve .gitkeep)
+data/uploads/*
+!data/uploads/.gitkeep
+data/models/*
+!data/models/.gitkeep
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+backend/data/models/*
+!backend/data/models/.gitkeep
+
+# Observability Persistent Volumes
+prometheus_data/
+grafana_data/

@@ -1,0 +1,19 @@
+# Root Dockerignore
+.git/
+.github/
+.vscode/
+.idea/
+*.md
+docs/
+.coverage
+htmlcov/
+.pytest_cache/
+**/__pycache__/
+**/*.pyc
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+*.db
+*.sqlite
+*.sqlite3
+test_*.db

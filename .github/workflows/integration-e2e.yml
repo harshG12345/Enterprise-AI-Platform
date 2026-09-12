@@ -1,0 +1,99 @@
+name: Full-Stack Containerized Integration & E2E Smoke Test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: integration-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker-compose-e2e:
+    name: Multi-Service Cluster Integration Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create Environment Secrets File
+        run: |
+          echo "POSTGRES_USER=postgres" >> .env
+          echo "POSTGRES_PASSWORD=postgres" >> .env
+          echo "POSTGRES_DB=enterprise_ai" >> .env
+          echo "SECRET_KEY=ci-e2e-super-secure-jwt-signing-secret-key-32chars" >> .env
+          echo "ENVIRONMENT=production" >> .env
+
+      - name: Build and Start All 9 Services with Docker Compose
+        run: |
+          docker compose up --build -d
+
+      - name: Inspect Running Containers
+        run: |
+          docker compose ps
+
+      - name: Wait for Cluster Readiness (Healthcheck Polling)
+        run: |
+          echo "Waiting for services to become healthy..."
+          for i in {1..30}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/healthz || true)
+            if [ "$STATUS" == "200" ]; then
+              echo "Gateway is healthy!"
+              break
+            fi
+            echo "Attempt $i/30: Gateway returned $STATUS. Waiting 2s..."
+            sleep 2
+          done
+
+      - name: Smoke Test - API Health Probe
+        run: |
+          curl --fail --retry 5 --retry-delay 3 http://localhost/api/v1/health
+
+      - name: Smoke Test - Prometheus Metrics Exposition
+        run: |
+          curl --fail --retry 5 --retry-delay 3 http://localhost/metrics | grep "http_requests_total"
+
+      - name: Smoke Test - Frontend SPA Entrypoint
+        run: |
+          curl --fail --retry 5 --retry-delay 3 http://localhost/ | grep -i "<html"
+
+      - name: Smoke Test - End-to-End User Auth API Flow
+        run: |
+          echo "1. Registering test user..."
+          REG_RES=$(curl -s -X POST http://localhost/api/v1/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"email":"e2e_ci_user@enterprise-ai.io","password":"SecurePassword123!","full_name":"CI E2E User","role":"ADMIN"}')
+          echo "Registration Response: $REG_RES"
+
+          echo "2. Authenticating user for JWT Token..."
+          AUTH_RES=$(curl -s -X POST http://localhost/api/v1/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"e2e_ci_user@enterprise-ai.io","password":"SecurePassword123!"}')
+          echo "Auth Response: $AUTH_RES"
+          TOKEN=$(echo $AUTH_RES | grep -o '"access_token":"[^"]*' | cut -d'"' -f4)
+
+          if [ -z "$TOKEN" ]; then
+            echo "FAILED: Access token was not returned."
+            exit 1
+          fi
+          echo "SUCCESS: Retrieved JWT token: ${TOKEN:0:15}..."
+
+          echo "3. Fetching User Profile (/users/me)..."
+          USER_RES=$(curl -s -X GET http://localhost/api/v1/users/me \
+            -H "Authorization: Bearer $TOKEN")
+          echo "Profile Response: $USER_RES"
+
+      - name: Collect Container Logs on Failure
+        if: failure()
+        run: |
+          docker compose logs
+
+      - name: Tear Down Multi-Container Cluster
+        if: always()
+        run: |
+          docker compose down -v

@@ -1,0 +1,5 @@
+age,income,credit_score,debt_ratio,predicted_value,probability_class_0,probability_class_1
+28.0,45000.0,620.0,0.45,0,0.6,0.4
+52.0,95000.0,780.0,0.2,0,0.6,0.4
+35.0,58000.0,710.0,0.3,0,0.6,0.4
+61.0,110000.0,810.0,0.15,0,0.6,0.4
