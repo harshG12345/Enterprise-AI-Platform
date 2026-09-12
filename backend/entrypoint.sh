@@ -62,7 +62,7 @@ case "$1" in
         echo "[entrypoint] Starting Celery Distributed Task Worker..."
         CONCURRENCY=${CELERY_CONCURRENCY:-4}
         LOG_LEVEL=${LOG_LEVEL:-INFO}
-        exec celery -A app.core.celery_app worker \
+        exec celery -A app.tasks.celery_app worker \
             --loglevel="$LOG_LEVEL" \
             --concurrency="$CONCURRENCY" \
             --queues=default,ml_training,batch_inference \
@@ -72,7 +72,7 @@ case "$1" in
     beat)
         echo "[entrypoint] Starting Celery Beat Periodic Scheduler..."
         LOG_LEVEL=${LOG_LEVEL:-INFO}
-        exec celery -A app.core.celery_app beat \
+        exec celery -A app.tasks.celery_app beat \
             --loglevel="$LOG_LEVEL" \
             --schedule=/tmp/celerybeat-schedule
         ;;

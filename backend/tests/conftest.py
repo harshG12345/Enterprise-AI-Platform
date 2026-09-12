@@ -1,9 +1,12 @@
 """Pytest configuration and test fixtures."""
 
+import os
 import pytest
 from httpx import ASGITransport, AsyncClient
 
 from app.core.rate_limiter import rate_limiter
+from app.database.base import Base
+from app.database.database import async_engine, sync_engine
 from app.main import app
 from app.tasks.celery_app import celery_app
 
@@ -12,12 +15,30 @@ celery_app.conf.task_always_eager = True
 celery_app.conf.task_eager_propagates = False
 
 
+@pytest.fixture(scope="session", autouse=True)
+def setup_test_database():
+    """Create all database tables before test session and drop them after."""
+    os.makedirs("data/uploads", exist_ok=True)
+    os.makedirs("data/models", exist_ok=True)
+
+    Base.metadata.create_all(bind=sync_engine)
+    yield
+    Base.metadata.drop_all(bind=sync_engine)
+
+
 @pytest.fixture(autouse=True)
 def reset_rate_limiter_fixture():
     """Reset rate limiter state before and after every test."""
     rate_limiter.reset()
     yield
     rate_limiter.reset()
+
+
+@pytest.fixture(autouse=True)
+async def cleanup_async_db():
+    """Ensure async engine connection pool is cleanly disposed between async tests."""
+    yield
+    await async_engine.dispose()
 
 
 @pytest.fixture

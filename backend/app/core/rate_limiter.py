@@ -22,15 +22,20 @@ class InMemoryRateLimiter:
     def __init__(self):
         # Maps key -> list of float timestamps
         self._history: Dict[str, List[float]] = defaultdict(list)
-        self._lock = asyncio.Lock()
+        self._lock: asyncio.Lock | None = None
         self._last_cleanup = time.time()
+
+    def _get_lock(self) -> asyncio.Lock:
+        if self._lock is None:
+            self._lock = asyncio.Lock()
+        return self._lock
 
     async def is_allowed(self, key: str, max_requests: int, window_seconds: int = 60) -> Tuple[bool, int, int, int]:
         """Check if request is permitted under sliding window policy.
 
         Returns: (allowed: bool, limit: int, remaining: int, retry_after: int)
         """
-        async with self._lock:
+        async with self._get_lock():
             now = time.time()
             cutoff = now - window_seconds
 
@@ -66,6 +71,7 @@ class InMemoryRateLimiter:
     def reset(self) -> None:
         """Clear all rate limit histories (used in tests)."""
         self._history.clear()
+        self._lock = None
 
 
 # Global limiter singleton

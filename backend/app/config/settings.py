@@ -12,11 +12,12 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
-        case_sensitive=True,
+        case_sensitive=False,
     )
 
     APP_NAME: str = "Enterprise AI Platform"
     APP_ENV: str = "development"
+    ENVIRONMENT: str | None = None
     DEBUG: bool = True
     LOG_LEVEL: str = "INFO"
 
@@ -53,6 +54,10 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return ["*"]
+
+    @property
+    def is_testing(self) -> bool:
+        return self.APP_ENV == "testing" or self.ENVIRONMENT == "testing"
 
 
 @lru_cache

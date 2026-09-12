@@ -9,10 +9,17 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import NullPool
 
 from app.config.settings import get_settings
 
 settings = get_settings()
+
+is_testing = (
+    settings.APP_ENV == "testing"
+    or getattr(settings, "ENVIRONMENT", None) == "testing"
+    or settings.DATABASE_URL.startswith("sqlite")
+)
 
 # Async Engine for FastAPI Request Handlers
 async_engine = create_async_engine(
@@ -20,6 +27,7 @@ async_engine = create_async_engine(
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,
+    poolclass=NullPool if is_testing else None,
 )
 
 AsyncSessionLocal = async_sessionmaker(
@@ -36,6 +44,8 @@ sync_engine = create_engine(
     echo=settings.DEBUG,
     future=True,
     pool_pre_ping=True,
+    poolclass=NullPool if is_testing else None,
+    connect_args={"check_same_thread": False} if settings.DATABASE_URL_SYNC.startswith("sqlite") else {},
 )
 
 SyncSessionLocal = sessionmaker(

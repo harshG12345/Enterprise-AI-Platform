@@ -192,7 +192,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 #### Start Celery Worker (in a separate terminal):
 ```bash
 cd backend
-celery -A app.core.celery_app worker --loglevel=INFO -Q default,ml_training,batch_inference
+celery -A app.tasks.celery_app worker --loglevel=INFO -Q default,ml_training,batch_inference
 ```
 
 #### Frontend Setup:

@@ -140,8 +140,9 @@ async def handle_generic_exception(request: Request, exc: Exception):
     )
 
 
-# API v1 Routers
+# API v1 Routers & Health Endpoints
 app.include_router(health_router, prefix="/api/v1")
+app.include_router(health_router, prefix="")
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(users_router, prefix="/api/v1")
 app.include_router(projects_router, prefix="/api/v1")
@@ -169,6 +170,12 @@ async def get_metrics():
 async def openapi_alias():
     """Alias for /api/v1/openapi.json to support standard tooling."""
     return app.openapi()
+
+
+@app.get("/healthz", include_in_schema=False)
+async def healthz():
+    """Direct liveness probe endpoint."""
+    return {"status": "healthy"}
 
 
 @app.get("/", tags=["Root"])
