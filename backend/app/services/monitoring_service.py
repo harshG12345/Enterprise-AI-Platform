@@ -202,7 +202,7 @@ class MonitoringService:
                 message=f"Model '{model.name}' has {drift_results['drifted_features_count']} drifted feature(s). Max PSI: {drift_results['max_psi']:.3f}.",
                 type=NotificationType.WARNING if drift_results["health_status"] == "WARNING" else NotificationType.ERROR,
                 category=NotificationCategory.DRIFT,
-                link=f"/monitoring",
+                link="/monitoring",
                 is_read=False,
                 created_at=datetime.now(UTC),
             )
