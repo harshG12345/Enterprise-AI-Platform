@@ -195,17 +195,12 @@ class MonitoringService:
 
         # Create user notification if drift is observed
         if drift_results.get("drifted_features_count", 0) > 0:
-            notif_type = (
-                NotificationType.WARNING
-                if drift_results["health_status"] == "WARNING"
-                else NotificationType.ERROR
-            )
             drift_notif = Notification(
                 id=uuid.uuid4(),
                 user_id=user.id,
                 title=f"Data Drift Alert: {model.name}",
                 message=f"Model '{model.name}' has {drift_results['drifted_features_count']} drifted feature(s). Max PSI: {drift_results['max_psi']:.3f}.",
-                type=notif_type,
+                type=NotificationType.WARNING if drift_results["health_status"] == "WARNING" else NotificationType.ERROR,
                 category=NotificationCategory.DRIFT,
                 link="/monitoring",
                 is_read=False,
