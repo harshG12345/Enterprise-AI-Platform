@@ -3,8 +3,6 @@
 import pytest
 from httpx import AsyncClient
 
-from app.models.notification import NotificationCategory
-
 
 @pytest.mark.asyncio
 async def test_notification_full_lifecycle(async_client: AsyncClient):
