@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 
 class AuditLogResponse(BaseModel):
@@ -14,10 +14,10 @@ class AuditLogResponse(BaseModel):
     resource_type: str
     resource_id: Optional[str] = None
     ip_address: Optional[str] = None
-    metadata_json: Optional[Dict[str, Any]] = Field(default=None, alias="metadata")
+    metadata_json: Optional[Dict[str, Any]] = None
     created_at: datetime
 
-    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AuditLogListResponse(BaseModel):
