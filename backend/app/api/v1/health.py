@@ -92,5 +92,9 @@ async def get_readiness() -> APIResponse[ReadinessResponse]:
     return APIResponse(
         success=True,
         data=data,
-        message="All systems operational and ready for traffic" if is_overall_ready else "Systems operating in degraded mode",
+        message=(
+            "All systems operational and ready for traffic"
+            if is_overall_ready
+            else "Systems operating in degraded mode"
+        ),
     )

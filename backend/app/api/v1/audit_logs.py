@@ -52,11 +52,7 @@ async def list_audit_logs(
     offset = (page - 1) * page_size
 
     # Fetch items
-    items_stmt = (
-        base_query.order_by(AuditLog.created_at.desc())
-        .offset(offset)
-        .limit(page_size)
-    )
+    items_stmt = base_query.order_by(AuditLog.created_at.desc()).offset(offset).limit(page_size)
     items_res = await db.execute(items_stmt)
     items = items_res.scalars().all()
 

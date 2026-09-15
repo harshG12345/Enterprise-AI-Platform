@@ -200,7 +200,11 @@ class MonitoringService:
                 user_id=user.id,
                 title=f"Data Drift Alert: {model.name}",
                 message=f"Model '{model.name}' has {drift_results['drifted_features_count']} drifted feature(s). Max PSI: {drift_results['max_psi']:.3f}.",
-                type=NotificationType.WARNING if drift_results["health_status"] == "WARNING" else NotificationType.ERROR,
+                type=(
+                    NotificationType.WARNING
+                    if drift_results["health_status"] == "WARNING"
+                    else NotificationType.ERROR
+                ),
                 category=NotificationCategory.DRIFT,
                 link="/monitoring",
                 is_read=False,
