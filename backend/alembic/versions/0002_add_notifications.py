@@ -10,8 +10,8 @@ from collections.abc import Sequence
 from typing import Union
 
 import sqlalchemy as sa
-from alembic import op
 
+from alembic import op
 from app.database.base import GUID
 
 # revision identifiers, used by Alembic.
