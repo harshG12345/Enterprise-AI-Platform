@@ -39,7 +39,7 @@ async def test_audit_logs_endpoint_rbac(async_client: AsyncClient):
     )
     login_res = await async_client.post(
         "/api/v1/auth/login",
-        data={"username": user_email, "password": "SecurePassword123!"},
+        json={"email": user_email, "password": "SecurePassword123!"},
     )
     token = login_res.json()["data"]["access_token"]
     headers = {"Authorization": f"Bearer {token}"}

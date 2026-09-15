@@ -30,6 +30,7 @@ def sanitize_filename(raw_filename: str) -> str:
 
     # 1. Strip directory components and null bytes
     cleaned = raw_filename.replace("\x00", "").strip()
+    cleaned = cleaned.replace("\\", "/")
     cleaned = os.path.basename(cleaned)
 
     # 2. Prevent hidden dot-files

@@ -22,7 +22,7 @@ async def test_notification_full_lifecycle(async_client: AsyncClient):
 
     login_res = await async_client.post(
         "/api/v1/auth/login",
-        data={"username": user_email, "password": "SecurePassword123!"},
+        json={"email": user_email, "password": "SecurePassword123!"},
     )
     assert login_res.status_code == 200
     token = login_res.json()["data"]["access_token"]
@@ -95,7 +95,7 @@ async def test_notification_batch_actions_and_filtering(async_client: AsyncClien
     )
     login_res = await async_client.post(
         "/api/v1/auth/login",
-        data={"username": user_email, "password": "SecurePassword123!"},
+        json={"email": user_email, "password": "SecurePassword123!"},
     )
     token = login_res.json()["data"]["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
@@ -157,7 +157,7 @@ async def test_notification_tenant_isolation(async_client: AsyncClient):
     )
     login_a = await async_client.post(
         "/api/v1/auth/login",
-        data={"username": "user_a@enterprise.ai", "password": "SecurePassword123!"},
+        json={"email": "user_a@enterprise.ai", "password": "SecurePassword123!"},
     )
     token_a = login_a.json()["data"]["access_token"]
     headers_a = {"Authorization": f"Bearer {token_a}"}
@@ -174,7 +174,7 @@ async def test_notification_tenant_isolation(async_client: AsyncClient):
     )
     login_b = await async_client.post(
         "/api/v1/auth/login",
-        data={"username": "user_b@enterprise.ai", "password": "SecurePassword123!"},
+        json={"email": "user_b@enterprise.ai", "password": "SecurePassword123!"},
     )
     token_b = login_b.json()["data"]["access_token"]
     headers_b = {"Authorization": f"Bearer {token_b}"}
