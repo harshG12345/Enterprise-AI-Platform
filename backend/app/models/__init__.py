@@ -4,6 +4,7 @@ from app.database.base import GUID, Base, TimestampMixin
 from app.models.audit_log import AuditLog
 from app.models.dataset import Dataset, DatasetStatus
 from app.models.experiment import Experiment
+from app.models.notification import Notification, NotificationCategory, NotificationType
 from app.models.prediction import Prediction
 from app.models.project import Project
 from app.models.trained_model import ModelStatus, TrainedModel
@@ -27,4 +28,7 @@ __all__ = [
     "ModelStatus",
     "Prediction",
     "AuditLog",
+    "Notification",
+    "NotificationType",
+    "NotificationCategory",
 ]

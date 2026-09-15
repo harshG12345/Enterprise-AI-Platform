@@ -19,6 +19,7 @@ from app.ml.data_loader import DataLoader
 from app.ml.trainer import ModelTrainer
 from app.models.audit_log import AuditLog
 from app.models.dataset import Dataset
+from app.models.notification import Notification, NotificationCategory, NotificationType
 from app.models.project import Project
 from app.models.trained_model import ModelStatus, TrainedModel
 from app.models.training_job import JobStatus, TaskType, TrainingJob
@@ -358,6 +359,21 @@ class TrainingService:
                     "metrics": train_results["test_metrics"].model_dump(),
                 },
             )
+
+            # 9. User Notification
+            notif = Notification(
+                id=uuid.uuid4(),
+                user_id=user.id,
+                title=f"Training Completed: {payload.model_name or payload.algorithm.value}",
+                message=f"Model training succeeded with {payload.algorithm.value} algorithm. Task: {payload.task_type}.",
+                type=NotificationType.SUCCESS,
+                category=NotificationCategory.TRAINING,
+                link=f"/models/{model_id}",
+                is_read=False,
+                created_at=datetime.now(UTC),
+            )
+            self.db.add(notif)
+            await self.db.commit()
 
             return TrainingJobDetailResponse(
                 id=job_id,

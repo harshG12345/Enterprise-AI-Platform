@@ -41,3 +41,4 @@ export * from './eda';
 export * from './preprocessor';
 export * from './training';
 export * from './experiment';
+export * from './notification';

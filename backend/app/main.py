@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.api.v1.audit_logs import router as audit_logs_router
 from app.api.v1.auth import router as auth_router
 from app.api.v1.datasets import router as datasets_router
 from app.api.v1.eda import router as eda_router
@@ -17,6 +18,7 @@ from app.api.v1.health import router as health_router
 from app.api.v1.jobs import router as jobs_router
 from app.api.v1.models import router as models_router
 from app.api.v1.monitoring import router as monitoring_router
+from app.api.v1.notifications import router as notifications_router
 from app.api.v1.predictions import router as predictions_router
 from app.api.v1.preprocessor import router as preprocessor_router
 from app.api.v1.projects import router as projects_router
@@ -155,6 +157,8 @@ app.include_router(experiments_router, prefix="/api/v1")
 app.include_router(models_router, prefix="/api/v1")
 app.include_router(predictions_router, prefix="/api/v1")
 app.include_router(monitoring_router, prefix="/api/v1")
+app.include_router(notifications_router, prefix="/api/v1")
+app.include_router(audit_logs_router, prefix="/api/v1")
 
 
 @app.get("/metrics", tags=["Observability & Metrics"], summary="Prometheus Metrics Scraping Endpoint")

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Bell, Activity, User as UserIcon, ShieldCheck, LogOut } from 'lucide-react';
+import { Activity, User as UserIcon, ShieldCheck, LogOut } from 'lucide-react';
 import { useAuth } from '../../store/authStore';
+import { NotificationDropdown } from '../notifications/NotificationDropdown';
 
 interface HeaderProps {
   systemStatus?: 'healthy' | 'warning' | 'error';
@@ -25,14 +26,7 @@ export const Header: React.FC<HeaderProps> = ({ systemStatus = 'healthy' }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors relative"
-        >
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
-        </button>
+        <NotificationDropdown />
 
         <div className="h-5 w-px bg-border" />
 

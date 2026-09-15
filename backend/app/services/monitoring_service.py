@@ -18,6 +18,7 @@ from app.core.storage import storage_backend
 from app.ml.data_loader import DataLoader
 from app.ml.drift_detector import DriftDetector
 from app.models.dataset import Dataset
+from app.models.notification import Notification, NotificationCategory, NotificationType
 from app.models.prediction import Prediction
 from app.models.trained_model import TrainedModel
 from app.models.user import User, UserRole
@@ -191,6 +192,22 @@ class MonitoringService:
                     feature_name=fr.feature_name,
                     alert_level="CRITICAL" if fr.psi_score >= 0.25 else "WARNING",
                 )
+
+        # Create user notification if drift is observed
+        if drift_results.get("drifted_features_count", 0) > 0:
+            drift_notif = Notification(
+                id=uuid.uuid4(),
+                user_id=user.id,
+                title=f"Data Drift Alert: {model.name}",
+                message=f"Model '{model.name}' has {drift_results['drifted_features_count']} drifted feature(s). Max PSI: {drift_results['max_psi']:.3f}.",
+                type=NotificationType.WARNING if drift_results["health_status"] == "WARNING" else NotificationType.ERROR,
+                category=NotificationCategory.DRIFT,
+                link=f"/monitoring",
+                is_read=False,
+                created_at=datetime.now(UTC),
+            )
+            self.db.add(drift_notif)
+            await self.db.commit()
 
         return ModelDriftAnalysisResponse(
             model_id=model.id,

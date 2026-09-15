@@ -111,7 +111,12 @@ def _prepare_data_from_raw_sync(
     return X_train, y_train, X_test, y_test, feature_names
 
 
-@celery_app.task(bind=True, name="app.tasks.training_tasks.train_model_async_task")
+@celery_app.task(
+    bind=True,
+    name="app.tasks.training_tasks.train_model_async_task",
+    max_retries=3,
+    default_retry_delay=5,
+)
 def train_model_async_task(
     self,
     job_id_str: str,

@@ -26,7 +26,12 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
-@celery_app.task(bind=True, name="app.tasks.prediction_tasks.batch_predict_task")
+@celery_app.task(
+    bind=True,
+    name="app.tasks.prediction_tasks.batch_predict_task",
+    max_retries=3,
+    default_retry_delay=5,
+)
 def batch_predict_task(
     self,
     job_id_str: str,

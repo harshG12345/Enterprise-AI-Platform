@@ -11,6 +11,7 @@ from app.database.base import GUID, Base, TimestampMixin
 
 if TYPE_CHECKING:
     from app.models.audit_log import AuditLog
+    from app.models.notification import Notification
     from app.models.prediction import Prediction
     from app.models.project import Project
     from app.models.training_job import TrainingJob
@@ -37,3 +38,6 @@ class User(Base, TimestampMixin):
     training_jobs: Mapped[List["TrainingJob"]] = relationship("TrainingJob", back_populates="user")
     predictions: Mapped[List["Prediction"]] = relationship("Prediction", back_populates="user")
     audit_logs: Mapped[List["AuditLog"]] = relationship("AuditLog", back_populates="user")
+    notifications: Mapped[List["Notification"]] = relationship(
+        "Notification", back_populates="user", cascade="all, delete-orphan"
+    )

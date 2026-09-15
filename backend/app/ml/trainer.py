@@ -321,6 +321,15 @@ class ModelTrainer:
         """Execute cross-validation, train final model on full train split, and calculate complete metrics."""
         start_time = time.perf_counter()
 
+        # Pre-flight input matrix validation & NaN/Inf sanitization
+        X_train = np.nan_to_num(X_train, nan=0.0, posinf=0.0, neginf=0.0)
+        X_test = np.nan_to_num(X_test, nan=0.0, posinf=0.0, neginf=0.0)
+
+        if len(X_train) < 2:
+            raise ValueError("Training matrix requires at least 2 samples")
+        if len(X_test) < 1:
+            raise ValueError("Evaluation matrix requires at least 1 sample")
+
         # 1. K-Fold Cross Validation
         cv_summary = None
         if cv_config and cv_config.n_splits >= 2 and len(X_train) >= 4:

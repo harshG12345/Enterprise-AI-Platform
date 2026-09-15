@@ -22,13 +22,20 @@ is_testing = (
 )
 
 # Async Engine for FastAPI Request Handlers
-async_engine = create_async_engine(
-    settings.DATABASE_URL,
-    echo=settings.DEBUG,
-    future=True,
-    pool_pre_ping=True,
-    poolclass=NullPool if is_testing else None,
-)
+async_engine_kwargs = {
+    "echo": settings.DEBUG,
+    "future": True,
+    "pool_pre_ping": True,
+}
+if is_testing:
+    async_engine_kwargs["poolclass"] = NullPool
+else:
+    async_engine_kwargs["pool_size"] = settings.DATABASE_POOL_SIZE
+    async_engine_kwargs["max_overflow"] = settings.DATABASE_MAX_OVERFLOW
+    async_engine_kwargs["pool_timeout"] = settings.DATABASE_POOL_TIMEOUT
+    async_engine_kwargs["pool_recycle"] = settings.DATABASE_POOL_RECYCLE
+
+async_engine = create_async_engine(settings.DATABASE_URL, **async_engine_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=async_engine,
@@ -39,14 +46,23 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 # Sync Engine for Celery Workers and Alembic Migrations
-sync_engine = create_engine(
-    settings.DATABASE_URL_SYNC,
-    echo=settings.DEBUG,
-    future=True,
-    pool_pre_ping=True,
-    poolclass=NullPool if is_testing else None,
-    connect_args={"check_same_thread": False} if settings.DATABASE_URL_SYNC.startswith("sqlite") else {},
-)
+sync_engine_kwargs = {
+    "echo": settings.DEBUG,
+    "future": True,
+    "pool_pre_ping": True,
+}
+if is_testing:
+    sync_engine_kwargs["poolclass"] = NullPool
+else:
+    sync_engine_kwargs["pool_size"] = settings.DATABASE_POOL_SIZE
+    sync_engine_kwargs["max_overflow"] = settings.DATABASE_MAX_OVERFLOW
+    sync_engine_kwargs["pool_timeout"] = settings.DATABASE_POOL_TIMEOUT
+    sync_engine_kwargs["pool_recycle"] = settings.DATABASE_POOL_RECYCLE
+
+if settings.DATABASE_URL_SYNC.startswith("sqlite"):
+    sync_engine_kwargs["connect_args"] = {"check_same_thread": False}
+
+sync_engine = create_engine(settings.DATABASE_URL_SYNC, **sync_engine_kwargs)
 
 SyncSessionLocal = sessionmaker(
     bind=sync_engine,

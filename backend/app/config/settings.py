@@ -27,6 +27,10 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/enterprise_ai"
     DATABASE_URL_SYNC: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/enterprise_ai"
+    DATABASE_POOL_SIZE: int = 20
+    DATABASE_MAX_OVERFLOW: int = 10
+    DATABASE_POOL_TIMEOUT: int = 30
+    DATABASE_POOL_RECYCLE: int = 1800
     REDIS_URL: str = "redis://localhost:6379/0"
     MLFLOW_TRACKING_URI: str = "http://localhost:5000"
 
