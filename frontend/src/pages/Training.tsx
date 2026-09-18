@@ -67,6 +67,7 @@ export const Training: React.FC = () => {
 
   const [trainingResult, setTrainingResult] = useState<TrainingJobDetailResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [trainingElapsed, setTrainingElapsed] = useState<number>(0);
 
   // 1. Fetch Projects
   const { data: projectsRes, isLoading: projectsLoading } = useQuery({
@@ -158,6 +159,20 @@ export const Training: React.FC = () => {
     },
   });
 
+  // Elapsed training timer
+  useEffect(() => {
+    let interval: any;
+    if (trainMutation.isPending) {
+      setTrainingElapsed(0);
+      interval = setInterval(() => {
+        setTrainingElapsed((prev) => prev + 1);
+      }, 1000);
+    } else {
+      setTrainingElapsed(0);
+    }
+    return () => clearInterval(interval);
+  }, [trainMutation.isPending]);
+
   const handleStartTraining = () => {
     if (!selectedProjectId || !selectedDatasetId || !targetColumn) {
       setErrorMessage('Please select a project, dataset, and target column.');
@@ -212,7 +227,7 @@ export const Training: React.FC = () => {
             {trainMutation.isPending ? (
               <>
                 <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Training Model...</span>
+                <span>Training Model ({trainingElapsed}s)...</span>
               </>
             ) : (
               <>
@@ -223,6 +238,22 @@ export const Training: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* In-Progress Training Alert */}
+      {trainMutation.isPending && (
+        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">Model Training & Cross-Validation in Progress...</p>
+              <p className="text-xs text-blue-700">Fitting estimator folds, computing statistical metrics, and generating diagnostics ({trainingElapsed}s elapsed).</p>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 text-xs font-mono font-medium rounded-full bg-blue-100 text-blue-800 border border-blue-300">
+            {trainingElapsed}s
+          </span>
+        </div>
+      )}
 
       {/* Error Alert */}
       {errorMessage && (

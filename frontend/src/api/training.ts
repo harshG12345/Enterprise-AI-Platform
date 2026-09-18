@@ -21,7 +21,8 @@ export const trainingApi = {
   trainModel: async (payload: TrainingJobCreate): Promise<TrainingJobDetailResponse> => {
     const response = await apiClient.post<APIResponse<TrainingJobDetailResponse>>(
       '/training/train',
-      payload
+      payload,
+      { timeout: 600000 }
     );
     return response.data.data;
   },
@@ -29,7 +30,8 @@ export const trainingApi = {
   trainModelAsync: async (payload: TrainingJobCreate): Promise<{ job_id: string; celery_task_id?: string; status: string; message: string }> => {
     const response = await apiClient.post<APIResponse<{ job_id: string; celery_task_id?: string; status: string; message: string }>>(
       '/training/train-async',
-      payload
+      payload,
+      { timeout: 600000 }
     );
     return response.data.data;
   },
