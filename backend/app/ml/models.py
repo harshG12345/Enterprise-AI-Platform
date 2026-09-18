@@ -1,7 +1,5 @@
 """High-performance Scikit-Learn accelerated ML algorithms with standardized BaseMLModel interface."""
 
-from typing import List
-
 import numpy as np
 from sklearn.ensemble import (
     GradientBoostingClassifier,
